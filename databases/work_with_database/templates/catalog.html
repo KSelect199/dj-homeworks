@@ -2,18 +2,34 @@
 {% load static %}
 
 {% block title %}Каталог{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="header">
-            <h1><a href="/catalog">Каталог</a></h1>
+            <h1><a href="{% url 'catalog:catalog' %}">Каталог</a></h1>
         </div>
 
         <div class="sort-block">
-            {# Здесь должен быть раздел с сортировкой #}
+            <strong>Сортировать:</strong>
+            <a href="{% url 'catalog:catalog' %}?sort=name">по названию</a> |
+            <a href="{% url 'catalog:catalog' %}?sort=min_price">сначала дешёвые</a> |
+            <a href="{% url 'catalog:catalog' %}?sort=max_price">сначала дорогие</a>
         </div>
 
         <div class="content">
-            {# Здесь должен отображаться каталог с телефонами #}
+            {% for phone in phones %}
+                <div class="phone-item">
+                    <h3><a href="{% url 'catalog:product' phone.slug %}">{{ phone.name }}</a></h3>
+                    <p class="price">{{ phone.price }} ₽</p>
+                    <p class="release">Дата выпуска: {{ phone.release_date }}</p>
+                    <p class="lte">LTE: {{ phone.lte_exists|yesno:"Да,Нет" }}</p>
+                    {% if phone.image %}
+                        <img src="{{ phone.image }}" alt="{{ phone.name }}" class="phone-image">
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>В каталоге пока нет телефонов.</p>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
